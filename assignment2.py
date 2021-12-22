@@ -8,7 +8,6 @@ import random
 from collections.abc import Iterable
 from matplotlib import pyplot as plt
 
-
 class Assignment2:
     def __init__(self):
         """
@@ -58,6 +57,15 @@ class Assignment2:
             if root is not None:
                 X.append(root)
 
+        xxs = np.linspace(a, b, 2000)
+        y1s = np.array([f1(x) for x in xxs])
+        y2s = np.array([f2(x) for x in xxs])
+        yys = np.array([f1(x) for x in X])
+        plt.plot(xxs, y1s)
+        plt.plot(xxs, y2s, c='black')
+        plt.scatter(X, yys, c='r')
+        plt.show()
+
         return X
 
     def get_derivative(self, f: callable, x, dx=1e-6):
@@ -65,22 +73,18 @@ class Assignment2:
 
     def get_newthon_rapson_root(self, f: callable, x, maxerror, maxit=100):
         fx = f(x)
-
         for _ in range(maxit):
             if abs(fx) < maxerror:
                 return x
-
             der = self.get_derivative(f, x)
             if abs(der) < maxerror:
                 break
-
             x = x - fx/der
             fx = f(x)
-
         return None
 
     def get_starting_points(self, f: callable, a, b):
-        xs = np.linspace(a, b, 1000, endpoint=True)
+        xs = np.linspace(a, b, 5000, endpoint=True)
         ys = np.array([f(x) for x in xs])
         ders = np.array([self.get_derivative(f, x) for x in xs])
         moment = 0
@@ -102,12 +106,7 @@ class Assignment2:
 
 
 
-
-
-
-
 ##########################################################################
-
 
 import unittest
 from sampleFunctions import *
@@ -144,7 +143,7 @@ class TestAssignment2(unittest.TestCase):
 
         f1 = mathfunctions.function5
         f2 = lambda x: 0
-        X = ass2.intersections(f1,f2,-30,30,maxerr=0.001)
+        X = ass2.intersections(f1, f2, -30, 30, maxerr=0.001)
         print(X)
         print(len(X))
         for x in X:
@@ -155,7 +154,29 @@ class TestAssignment2(unittest.TestCase):
 
         f1 = mathfunctions.function3
         f2 = lambda x: 0
-        X = ass2.intersections(f1,f2,-5,5,maxerr=0.001)
+        X = ass2.intersections(f1, f2, -5, 5 ,maxerr=0.001)
+        print(X)
+        print(len(X))
+        for x in X:
+            self.assertGreaterEqual(0.001, abs(f1(x) - f2(x)))
+
+    def test_multiple_intersections3(self):
+        ass2 = Assignment2()
+
+        f1 = mathfunctions.function3
+        f2 = lambda x: np.sin(3*x)
+        X = ass2.intersections(f1, f2, -20, -10, maxerr=0.001)
+        print(X)
+        print(len(X))
+        for x in X:
+            self.assertGreaterEqual(0.001, abs(f1(x) - f2(x)))
+
+    def test_multiple_intersections4(self):
+        ass2 = Assignment2()
+
+        f1 = lambda x: np.cos(x)
+        f2 = lambda x: np.sin(x)
+        X = ass2.intersections(f1, f2, -20, 20, maxerr=0.001)
         print(X)
         print(len(X))
         for x in X:

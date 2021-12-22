@@ -13,6 +13,7 @@ class Assignment1:
         self.A = None
         self.B = None
         self.points = None
+        self.interpolation = None
 
     def interpolate(self, f: callable, a: float, b: float, n: int) -> callable:
         """
@@ -119,10 +120,40 @@ class Assignment1:
             if self.points[i][0] <= x:
                 return self.get_cubic(self.points[i], self.A[i], self.B[i], self.points[i+1])
 
+    def get_curve_function2(self,x):
+        keys = list(self.interpolation.keys())
+        for i in range(len(keys)-1, -1, -1):
+            if keys[i] <= x:
+                return self.interpolation[keys[i]]
+
     def normalize_x(self, x):
         for i in range(len(self.points) - 2, -1, -1):
             if self.points[i][0] <= x:
                 return (x - self.points[i][0])/(self.points[i+1][0] - self.points[i][0])
+
+
+    def interpolate2(self, f: callable, a: float, b: float, n: int) -> callable:
+        if n == 1:
+            ans = np.nan
+            while np.isnan(ans):
+                ans = f(np.random.uniform(a, b))
+            return lambda x: f(ans)
+
+        if (n % 3)-1 != 0:
+            n = 3*(n % 3)+1
+
+        xs = np.linspace(a, b, n, endpoint=True)
+        xs = np.where(xs == 0, -0.00005, xs)
+        ys = np.array([f(x) for x in xs])
+        P = np.array([xs, ys]).T
+        self.points = P
+
+        self.interpolation = {xs[i]: self.get_cubic(P[i], P[i+1], P[i+2], P[i+3]) for i in range(0, n-3, 3)}
+        result = lambda x: self.get_curve_function2(x)(self.normalize_x(x))[1]
+        return result
+
+
+
 
 
 
