@@ -49,13 +49,15 @@ class Assignment2:
 
         """
         g = lambda x: f1(x) - f2(x)
-        xs = self.get_starting_points(g, a, b)
+        xs = self.get_starting_points(g, a, b, maxerr)
 
         X = []
         for x in xs:
             root = self.get_newthon_rapson_root(g, x, maxerr)
             if root is not None:
                 X.append(root)
+        if X[-1] > b:
+            X.pop(-1)
 
         xxs = np.linspace(a, b, 2000)
         y1s = np.array([f1(x) for x in xxs])
@@ -83,8 +85,9 @@ class Assignment2:
             fx = f(x)
         return None
 
-    def get_starting_points(self, f: callable, a, b):
-        xs = np.linspace(a, b, 5000, endpoint=True)
+    def get_starting_points(self, f: callable, a, b, maxerror):
+        n = int((abs(b-a)/maxerror)/2)
+        xs = np.linspace(a, b, n, endpoint=True)
         ys = np.array([f(x) for x in xs])
         ders = np.array([self.get_derivative(f, x) for x in xs])
         moment = 0

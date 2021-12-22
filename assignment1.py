@@ -14,6 +14,13 @@ class Assignment1:
         self.B = None
         self.points = None
         self.interpolation = None
+        self.M = np.array(
+            [[-1, +3, -3, +1],
+             [+3, -6, +3, 0],
+             [-3, +3, 0, 0],
+             [+1, 0, 0, 0]],
+            dtype=np.float32
+        )
 
     def interpolate(self, f: callable, a: float, b: float, n: int) -> callable:
         """
@@ -140,7 +147,7 @@ class Assignment1:
             return lambda x: f(ans)
 
         if (n % 3)-1 != 0:
-            n = 3*(n % 3)+1
+            n = 3*int(n / 3)+1
 
         xs = np.linspace(a, b, n, endpoint=True)
         xs = np.where(xs == 0, -0.00005, xs)
@@ -148,14 +155,25 @@ class Assignment1:
         P = np.array([xs, ys]).T
         self.points = P
 
-        self.interpolation = {xs[i]: self.get_cubic(P[i], P[i+1], P[i+2], P[i+3]) for i in range(0, n-3, 3)}
-        result = lambda x: self.get_curve_function2(x)(self.normalize_x(x))[1]
+        # self.interpolation = {xs[i]: self.get_cubic(P[i], P[i+1], P[i+2], P[i+3]) for i in range(0, n-3, 3)}
+        result = lambda x: self.inter_dot_product(x)
         return result
 
-
-
-
-
+    def inter_dot_product(self, x):
+        t = self.normalize_x(x)
+        xi = None
+        for i in range(len(self.points)-1, -1, -1):
+            if self.points[i][0] <= x:
+                xi = i
+                break
+        xi = int(xi / 3)*3
+        p1 = self.points[xi]
+        p2 = self.points[xi+1]
+        p3 = self.points[xi+2]
+        p4 = self.points[xi+3]
+        P = np.array([p1, p2, p3, p4], dtype=np.float32)
+        T = np.array([t ** 3, t ** 2, t, 1], dtype=np.float32)
+        return T.dot(self.M).dot(P)[1]
 
 
 ##########################################################################
