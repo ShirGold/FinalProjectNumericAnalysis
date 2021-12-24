@@ -368,8 +368,8 @@ class Grader():
 
     def grade(self):
         # self.grade_assignment_1()
-        self.grade_assignment_2()
-        #self.grade_assignment_3()
+        # self.grade_assignment_2()
+        self.grade_assignment_3()
         #self.grade_assignment_4A()
         #self.grade_assignment_4B_area()
         #self.grade_assignment_4B_fit()

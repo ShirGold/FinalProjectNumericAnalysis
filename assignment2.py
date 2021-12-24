@@ -59,14 +59,14 @@ class Assignment2:
         if X[-1] > b:
             X.pop(-1)
 
-        xxs = np.linspace(a, b, 2000)
-        y1s = np.array([f1(x) for x in xxs])
-        y2s = np.array([f2(x) for x in xxs])
-        yys = np.array([f1(x) for x in X])
-        plt.plot(xxs, y1s)
-        plt.plot(xxs, y2s, c='black')
-        plt.scatter(X, yys, c='r')
-        plt.show()
+        # xxs = np.linspace(a, b, 2000)
+        # y1s = np.array([f1(x) for x in xxs])
+        # y2s = np.array([f2(x) for x in xxs])
+        # yys = np.array([f1(x) for x in X])
+        # plt.plot(xxs, y1s)
+        # plt.plot(xxs, y2s, c='black')
+        # plt.scatter(X, yys, c='r')
+        # plt.show()
 
         return X
 
@@ -86,9 +86,14 @@ class Assignment2:
         return None
 
     def get_starting_points(self, f: callable, a, b, maxerror):
-        n = int((abs(b-a)/maxerror)/2)
+        if isinstance(f, np.poly1d):
+            n = f.order*2
+        elif isinstance(f, np.polynomial.Polynomial):
+            n = f.degree()*2
+        else:
+            n = int((abs(b-a)/maxerror)/2)
         xs = np.linspace(a, b, n, endpoint=True)
-        ys = np.array([f(x) for x in xs])
+        ys = f(xs)
         ders = np.array([self.get_derivative(f, x) for x in xs])
         moment = 0
         starting_points = []
@@ -179,7 +184,7 @@ class TestAssignment2(unittest.TestCase):
 
         f1 = lambda x: np.cos(x)
         f2 = lambda x: np.sin(x)
-        X = ass2.intersections(f1, f2, -20, 20, maxerr=0.001)
+        X = ass2.intersections(f1, f2, -100, 100, maxerr=0.001)
         print(X)
         print(len(X))
         for x in X:

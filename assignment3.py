@@ -19,6 +19,7 @@ This assignment is more complicated than Assignment1 and Assignment2 because:
 import numpy as np
 import time
 import random
+from assignment2 import Assignment2
 
 
 class Assignment3:
@@ -59,9 +60,20 @@ class Assignment3:
         """
 
         # replace this line with your solution
-        result = np.float32(1.0)
+        result = self.composite_simpsons_rule(f, a, b, n)
 
         return result
+
+    def composite_simpsons_rule(self, f: callable, a, b, n):
+        if n % 2 == 1:
+            n -= 1
+        h = (b-a)/n
+        xs = np.linspace(a, b, n+1, endpoint=True)
+        ys = f(xs)
+        res = np.float32(h/3*np.sum(ys[0:-1:2] + 4*ys[1::2] + ys[2::2]))
+
+        return res
+
 
     def areabetween(self, f1: callable, f2: callable) -> np.float32:
         """
@@ -91,7 +103,20 @@ class Assignment3:
         """
 
         # replace this line with your solution
-        result = np.float32(1.0)
+        T = time.time()
+        print("starting")
+        g = lambda x: abs(f1(x) - f2(x))
+        ass2 = Assignment2()
+        print("intersecting")
+        intersections = ass2.intersections(f1, f2, -1000, 1000)
+        print(f"Time = {time.time() - T}")
+        if len(intersections) < 2:
+            return np.nan
+        a = intersections[0]
+        b = intersections[-1]
+        print("integrating")
+        result = self.integrate(g, a, b, 1000)
+        print(f"Time = {time.time() - T}")
 
         return result
 
@@ -111,7 +136,7 @@ class TestAssignment3(unittest.TestCase):
         f1 = np.poly1d([-1, 0, 1])
         r = ass3.integrate(f1, -1, 1, 10)
 
-        self.assertEquals(r.dtype, np.float32)
+        self.assertEqual(r.dtype, np.float32)
 
     def test_integrate_hard_case(self):
         ass3 = Assignment3()
@@ -119,6 +144,16 @@ class TestAssignment3(unittest.TestCase):
         r = ass3.integrate(f1, 0.09, 10, 20)
         true_result = -7.78662 * 10 ** 33
         self.assertGreaterEqual(0.001, abs((r - true_result) / true_result))
+
+
+    def test_area_between_polys(self):
+        ass3 = Assignment3()
+        f1 = np.polynomial.Polynomial([1, 0, -2, 1])
+        f2 = np.polynomial.Polynomial([0, 1])
+        r = ass3.areabetween(f1, f2)
+        true_result = 2.76555
+        self.assertGreaterEqual(0.001, abs((r - true_result)/true_result))
+
 
 
 if __name__ == "__main__":

@@ -64,7 +64,7 @@ class Assignment1:
 
         xs = np.linspace(a, b, n, endpoint=True)
         xs = np.where(xs == 0, -0.00005, xs)
-        ys = np.array([f(x) for x in xs])
+        ys = f(xs)
 
         points = np.array([xs, ys]).T
         n = len(points)-1
