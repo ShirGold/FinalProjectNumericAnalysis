@@ -239,8 +239,7 @@ class TestAssignment1(unittest.TestCase):
     def test_with_multyple_functions(self):
         fs = get_all_functions()
         ns = [1,10,20,50,100,200,500,1000]
-        # ns = [1]
-        fs = {key:val for (key,val) in fs.items() if key in ['f(x)= sin(x)/x']}
+        fs = {key:val for (key,val) in fs.items() if key in ['f(x)= 1/ln(x)']}
         ass1 = Assignment1()
         for f in fs:
             times = []
@@ -249,8 +248,8 @@ class TestAssignment1(unittest.TestCase):
             for n in ns:
                 print(f'n = {n}')
                 T = time.time()
-                ff = ass1.interpolate(fs[f], -20, 20, n)
-                xs = list(sorted(np.random.uniform(-20, 20, 200)))
+                ff = ass1.interpolate(fs[f], 5, 20, n)
+                xs = list(sorted(np.random.uniform(5, 20, 200)))
                 err = 0
                 ys = []
                 yys = []

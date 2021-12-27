@@ -60,9 +60,15 @@ class Assignment3:
         """
 
         # replace this line with your solution
+        c = 1
+        if a > b:
+            c = -1
+            temp = b
+            b = a
+            a = temp
         result = self.composite_simpsons_rule(f, a, b, n)
 
-        return result
+        return result*c
 
     def composite_simpsons_rule(self, f: callable, a, b, n):
         if n % 2 == 1:
@@ -73,6 +79,17 @@ class Assignment3:
         res = np.float32(h/3*np.sum(ys[0:-1:2] + 4*ys[1::2] + ys[2::2]))
 
         return res
+
+    def alternative_integral(self, f, a, b, n):
+        if n % 4 != 0:
+            n -= n % 4
+        h = (b - a) / n
+        xs = np.linspace(a, b, n+1, endpoint=True)
+        ys = f(xs)
+        res = np.float32(h / 90 * np.sum(7*ys[0:-4:4]+32*ys[1::4]+12*ys[2::4]+32*ys[3::4]+7*ys[4::4]))
+
+        return res
+
 
 
     def areabetween(self, f1: callable, f2: callable) -> np.float32:
@@ -103,22 +120,17 @@ class Assignment3:
         """
 
         # replace this line with your solution
-        T = time.time()
-        print("starting")
-        g = lambda x: abs(f1(x) - f2(x))
         ass2 = Assignment2()
-        print("intersecting")
-        intersections = ass2.intersections(f1, f2, -1000, 1000)
-        print(f"Time = {time.time() - T}")
+        intersections = ass2.intersections(f1, f2, 1, 100)
+        g = lambda x: abs(f1(x) - f2(x))
         if len(intersections) < 2:
             return np.nan
         a = intersections[0]
         b = intersections[-1]
-        print("integrating")
         result = self.integrate(g, a, b, 1000)
-        print(f"Time = {time.time() - T}")
 
         return result
+
 
 
 ##########################################################################
@@ -127,6 +139,7 @@ class Assignment3:
 import unittest
 from sampleFunctions import *
 from tqdm import tqdm
+from functionUtils import *
 
 
 class TestAssignment3(unittest.TestCase):
@@ -145,6 +158,12 @@ class TestAssignment3(unittest.TestCase):
         true_result = -7.78662 * 10 ** 33
         self.assertGreaterEqual(0.001, abs((r - true_result) / true_result))
 
+    def test_integral(self):
+        ass3 = Assignment3()
+        f = RESTRICT_INVOCATIONS(20)(np.polynomial.Polynomial([3, -1, 1, 1]))
+        r = ass3.integrate(f, 1, 10, 20)
+        true_result = 11241/4
+        self.assertGreaterEqual(0.01, abs((r - true_result) / true_result))
 
     def test_area_between_polys(self):
         ass3 = Assignment3()
@@ -154,6 +173,13 @@ class TestAssignment3(unittest.TestCase):
         true_result = 2.76555
         self.assertGreaterEqual(0.001, abs((r - true_result)/true_result))
 
+    def test_area_between_not_polys(self):
+        ass3 = Assignment3()
+        f1 = lambda x: np.sin(3*x)*5
+        f2 = lambda x: (x-20)/3
+        r = ass3.areabetween(f1, f2)
+        true_result = 104.088
+        self.assertGreaterEqual(0.001, abs((r - true_result)/true_result))
 
 
 if __name__ == "__main__":

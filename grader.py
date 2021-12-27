@@ -240,7 +240,7 @@ class Grader():
 
     def grade_assignment_4A(self):
         try:
-            import assignment4A
+            import assignment4
 
             names= ('f'      ,'a','b','d','maxtime')
             valss=[(f2_noise ,0  ,5  ,10 ,5),
@@ -268,7 +268,7 @@ class Grader():
            
             repeats=1
 
-            ass = assignment4A.Assignment4A()
+            ass = assignment4.Assignment4A()
             self.grade_assignment(ass.fit,params,'Assignment 4A',func_error,expected_results,repeats)
         except Exception as e:
             self.add_error_report('Assignment 4A', 'fit', e, 1)
@@ -359,7 +359,7 @@ class Grader():
         with open(os.path.join(self.dir_path,'res.csv'),'w',newline='', encoding='utf-16') as f:
             fieldnames = ['student_moodle_id','student_name','assignemtn','function','f','f1','f2','contour','sample','a','b','n','d','maxtime','maxerr','output','expected_output','error','repeats','time','mark']
 
-            writer=csv.DictWriter(f,delimiter='\t',fieldnames=fieldnames)
+            writer = csv.DictWriter(f, delimiter='\t', fieldnames=fieldnames)
             writer.writeheader()
             # writer.writerow(['student_moodle_id','student_name','assignemtn','function','params','output','expected_output','error','repeats','time','mark'])
             for report in self.reports:
@@ -369,8 +369,8 @@ class Grader():
     def grade(self):
         # self.grade_assignment_1()
         # self.grade_assignment_2()
-        self.grade_assignment_3()
-        #self.grade_assignment_4A()
+        # self.grade_assignment_3()
+        self.grade_assignment_4A()
         #self.grade_assignment_4B_area()
         #self.grade_assignment_4B_fit()
         self.report()

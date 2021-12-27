@@ -48,9 +48,15 @@ class Assignment2:
             |f1(x)-f2(x)|<=maxerr.
 
         """
-        g = lambda x: f1(x) - f2(x)
-        xs = self.get_starting_points(g, a, b, maxerr)
 
+        if isinstance(f1, np.poly1d) or isinstance(f1, np.polynomial.Polynomial):
+            if isinstance(f1, np.poly1d) or isinstance(f1, np.polynomial.Polynomial):
+                g = f1 - f2
+            else:
+                g = lambda x: f1(x) - f2(x)
+        else:
+            g = lambda x: f1(x) - f2(x)
+        xs = self.get_starting_points(g, a, b, maxerr)
         X = []
         for x in xs:
             root = self.get_newthon_rapson_root(g, x, maxerr)
@@ -59,7 +65,9 @@ class Assignment2:
         if X[-1] > b:
             X.pop(-1)
 
-        # xxs = np.linspace(a, b, 2000)
+        X = self.filter_close_roots(X, maxerr)
+
+        # xxs = np.linspace(X[0], X[-1], 2000)
         # y1s = np.array([f1(x) for x in xxs])
         # y2s = np.array([f2(x) for x in xxs])
         # yys = np.array([f1(x) for x in X])
@@ -87,9 +95,9 @@ class Assignment2:
 
     def get_starting_points(self, f: callable, a, b, maxerror):
         if isinstance(f, np.poly1d):
-            n = f.order*2
+            n = f.order*100
         elif isinstance(f, np.polynomial.Polynomial):
-            n = f.degree()*2
+            n = f.degree()*100
         else:
             n = int((abs(b-a)/maxerror)/2)
         xs = np.linspace(a, b, n, endpoint=True)
@@ -108,9 +116,20 @@ class Assignment2:
                 starting_points[-1] = xs[i]
             elif ders[i] < 0 and moment == -1 and ys[i] > 0:
                 starting_points[-1] = xs[i]
-        if len(starting_points) == 0:
+        if len(starting_points) < 2:
             return [a, b]
         return starting_points
+
+    def filter_close_roots(self, roots, err):
+        i = 0
+        end = len(roots)-1
+        while i < end:
+            if abs(roots[i] - roots[i+1]) < err:
+                roots.pop(i)
+                i -= 1
+                end -= 1
+            i += 1
+        return roots
 
 
 
@@ -162,7 +181,7 @@ class TestAssignment2(unittest.TestCase):
 
         f1 = mathfunctions.function3
         f2 = lambda x: 0
-        X = ass2.intersections(f1, f2, -5, 5 ,maxerr=0.001)
+        X = ass2.intersections(f1, f2, -5, 5, maxerr=0.001)
         print(X)
         print(len(X))
         for x in X:
