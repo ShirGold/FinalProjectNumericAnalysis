@@ -15,6 +15,7 @@ This assignment is more complicated than Assignment1 and Assignment2 because:
        You should explain why in one of the theoretical questions in MOODLE. 
 
 """
+import math
 
 import numpy as np
 import time
@@ -180,6 +181,21 @@ class TestAssignment3(unittest.TestCase):
         r = ass3.areabetween(f1, f2)
         true_result = 104.088
         self.assertGreaterEqual(0.001, abs((r - true_result)/true_result))
+
+    def test_stack_funcs(self):
+        ass = Assignment3()
+        f1 = lambda x: 5*np.exp(-1*(x**2))
+        a1 = 0
+        b1 = 4
+        f2 = lambda x: np.log(6*np.log(x))
+        a2 = 2
+        b2 = 5
+        f3 = lambda x: (np.exp(-1*x))/x
+        f4 = lambda x: (x**(math.e - 1))*np.exp(-1*x)
+        print(f'f1 integral: {ass.integrate(f1, a1, b1, 4)}')
+        print(f'f2 integral: {ass.integrate(f2, a2, b2, 4)}')
+        print(f'f3 integral: {ass.integrate(f3, a2, b2, 4)}')
+        print(f'f4 integral: {ass.integrate(f4, a2, b2, 4)}')
 
 
 if __name__ == "__main__":

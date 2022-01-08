@@ -1,4 +1,6 @@
-from math import e, log
+from math import e
+from numpy import log
+# from numpy import exp as e
 from numpy import sin
 from numpy.ma import arctan
 from numpy import power as pow, empty, float64
@@ -121,7 +123,39 @@ def f13_noise(x):
 def f13_nr(x):
     return 5 * pow(x, 2) - 10 * x + 1
 
+def f14(x):
+    return np.cos(x)
 
+def f15(x):
+    return np.sin(x)
+
+
+functions = {
+        'f1(x)= 5': f1,
+        'f1(x)= 5 NOISY': f1_noise,
+        'f2(x)= x^2 - 3x + 2': f2,
+        'f2(x)= x^2 - 3x + 2 NOISY': f2_noise,
+        'f3(x)= sin(x^2)': f3,
+        'f3(x)= sin(x^2) NOISY': f3_noise,
+        'f4(x)= e^(-2x^2)': f4,
+        'f4(x)= e^(-2x^2) NOISY': f4_noise,
+        'f5(x)= arctan(x)': f5,
+        'f6(x)= sin(x)/x': f6,
+        'f7(x)= 1/ln(x)': f7,
+        'f7(x)= 1/ln(x) NOISY': f7_noise,
+        'f8(x)= e^(e^x)': f8,
+        'f8(x)= e^(e^x) NOISY': f8_noise,
+        'f9(x)= ln(ln(x))': f9,
+        'f9(x)= ln(ln(x)) NOISY': f9_noise,
+        'f10(x)= sin(ln(x))': f10,
+        'f11(x)= 2^(1/x^2)*sin(1/x)': f11,
+        'f12(x)= x^2 - 5x + 2': f12,
+        'f13(x)= 5x^2 - 10x + 1': f13,
+        'f13(x)= 5x^2 - 10x + 1 NOISY': f13_noise,
+        'f14(x)= cos(x)': f14,
+        'f15(x)= sin(x)': f15
+}
+ns = [1, 10, 20, 50, 100, 200, 500, 1000]
 
 class Polygon(AbstractShape):
     def __init__(self, knots, noise):

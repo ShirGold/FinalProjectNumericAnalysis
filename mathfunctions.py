@@ -22,7 +22,7 @@ def function9(x):
 def function10(x):
     return np.arctan(x)
 def function11(x):
-    return np.power(2,(1/(x**2)))*np.sin(1/x)
+    return np.power(2, (1/(x**2)))*np.sin(1/x)
 
 def get_all_functions():
     fs = {

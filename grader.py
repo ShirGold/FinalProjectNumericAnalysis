@@ -139,6 +139,7 @@ class Grader():
     def grade_assignment_1(self):
         try:
             import assignment1
+            # import eran_ass1
 
             R=RESTRICT_INVOCATIONS
             names=  ('f','a','b','n')
@@ -169,6 +170,7 @@ class Grader():
             repeats=1
        
             ass = assignment1.Assignment1()
+            # ass = eran_ass1.Assignment1()
             self.grade_assignment(ass.interpolate,params,'Assignment 1',func_error,expected_results,repeats)
         except Exception as e:
             self.add_error_report('Assignment 1', 'interpolate', e, 1)
@@ -276,7 +278,7 @@ class Grader():
 
     def grade_assignment_4B_area(self):
         try:
-            import assignment4B
+            import assignment5
 
             names= ('contour'         ,'maxerr')
             valss=[
@@ -301,7 +303,7 @@ class Grader():
                     ]
             
             func_error=[ 
-                    lambda res,exp: 
+                    lambda res,exp:
                                 abs(abs(res)-abs(exp))/abs(exp) 
                     for c,e in valss
                     ]
@@ -309,15 +311,15 @@ class Grader():
             repeats=1
        
 
-            ass = assignment4B.Assignment4()
-            self.grade_assignment(ass.area,params,'Assignment 4B area',func_error,expected_results,repeats)
+            ass = assignment5.Assignment5()
+            self.grade_assignment(ass.area,params,'Assignment 5 area',func_error,expected_results,repeats)
 
         except Exception as e:
             self.add_error_report('Assignment 4B area', 'area', e, 1)
             
     def grade_assignment_4B_fit(self):
         try: 
-            import assignment4B
+            import assignment5
 
 
             names= ('sample'         ,'maxtime')
@@ -350,7 +352,7 @@ class Grader():
            
             repeats=1
  
-            ass = assignment4B.Assignment4()
+            ass = assignment5.Assignment5()
             self.grade_assignment(ass.fit_shape,params,'Assignment 4B fit',func_error,expected_results,repeats)
         except Exception as e:
             self.add_error_report('Assignment 4B fit', 'fit', e, 1)
@@ -367,12 +369,18 @@ class Grader():
 
 
     def grade(self):
+        # print("#################### GRADING ASSIGNMENT 1 #######################")
         # self.grade_assignment_1()
+        # print("#################### GRADING ASSIGNMENT 2 #######################")
         # self.grade_assignment_2()
+        # print("#################### GRADING ASSIGNMENT 3 #######################")
         # self.grade_assignment_3()
-        self.grade_assignment_4A()
-        #self.grade_assignment_4B_area()
-        #self.grade_assignment_4B_fit()
+        # print("#################### GRADING ASSIGNMENT 4 #######################")
+        # self.grade_assignment_4A()
+        print("#################### GRADING ASSIGNMENT 5.A #######################")
+        self.grade_assignment_4B_area()
+        # print("#################### GRADING ASSIGNMENT 5.B #######################")
+        # self.grade_assignment_4B_fit()
         self.report()
         sys.path.remove(self.dir_path)
 

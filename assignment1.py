@@ -62,18 +62,20 @@ class Assignment1:
                 ans = f(np.random.uniform(a, b))
             return lambda x: f(ans)
 
-        xs = np.linspace(a, b, n, endpoint=True)
-        xs = np.where(xs == 0, -0.00005, xs)
-        ys = f(xs)
+        points = self.get_samples(f, a, b, n)
+        return self.get_interpolation(points)
 
-        points = np.array([xs, ys]).T
-        n = len(points)-1
+    def get_interpolation(self, points):
+        n = len(points) - 1
 
-        C = self.build_coeff_matrix(n)
+        # C = self.build_coeff_matrix(n)
         P = self.build_points_vector(points, n)
 
-        Ax = self.solve_tridiagonal_matrix(C, [p[0] for p in P], n)
-        Ay = self.solve_tridiagonal_matrix(C, [p[1] for p in P], n)
+        # Ax = self.solve_tridiagonal_matrix(C, [p[0] for p in P], n)
+        # Ay = self.solve_tridiagonal_matrix(C, [p[1] for p in P], n)
+        ac, bc, cc = self.build_diagonals(n)
+        Ax = self.solve_tridiagonal_matrix_diag(list(ac), list(bc), list(cc), [p[0] for p in P], n)
+        Ay = self.solve_tridiagonal_matrix_diag(list(ac), list(bc), list(cc), [p[1] for p in P], n)
         A = np.array([Ax, Ay]).T
 
         B = [0] * n
@@ -85,8 +87,15 @@ class Assignment1:
         self.B = B
         self.points = points
 
-        result = lambda x: self.get_curve_function(x)(self.normalize_x(x))[1]
-        return result
+        return lambda x: self.get_curve_function(x)(self.normalize_x(x))[1]
+
+    def get_samples(self, f, a, b, n):
+        xs = np.linspace(a, b, n, endpoint=True)
+        xs = np.where(xs == 0, -0.00005, xs)
+        ys = f(xs)
+
+        points = np.array([xs, ys]).T
+        return points
 
     def build_coeff_matrix(self, n):
         C = 4 * np.identity(n)
@@ -96,6 +105,26 @@ class Assignment1:
         C[n - 1, n - 1] = 7
         C[n - 1, n - 2] = 2
         return C
+
+    def build_diagonals(self, n):
+        ac = np.ones([n-1])
+        bc = np.ones([n])*4
+        cc = np.ones([n-1])
+        bc[0] = 2
+        bc[-1] = 7
+        ac[-1] = 2
+        return ac, bc, cc
+
+    def solve_tridiagonal_matrix_diag(self, ac, bc, cc, P, n):
+        for i in range(1, n):
+            mc = ac[i - 1] / bc[i - 1]
+            bc[i] = bc[i] - mc * cc[i - 1]
+            P[i] = P[i] - mc * P[i - 1]
+        xc = bc
+        xc[-1] = P[-1] / bc[-1]
+        for i in range(n - 2, -1, -1):
+            xc[i] = (P[i] - cc[i] * xc[i + 1]) / bc[i]
+        return xc
 
     def build_points_vector(self, points, n):
         P = [2 * (2 * points[i] + points[i + 1]) for i in range(n)]
@@ -127,7 +156,7 @@ class Assignment1:
             if self.points[i][0] <= x:
                 return self.get_cubic(self.points[i], self.A[i], self.B[i], self.points[i+1])
 
-    def get_curve_function2(self,x):
+    def get_curve_function2(self, x):
         keys = list(self.interpolation.keys())
         for i in range(len(keys)-1, -1, -1):
             if keys[i] <= x:
@@ -239,7 +268,7 @@ class TestAssignment1(unittest.TestCase):
     def test_with_multyple_functions(self):
         fs = get_all_functions()
         ns = [1,10,20,50,100,200,500,1000]
-        fs = {key:val for (key,val) in fs.items() if key in ['f(x)= 1/ln(x)']}
+        fs = {key:val for (key,val) in fs.items() if key in ['f(x)= sin(x)/x']}
         ass1 = Assignment1()
         for f in fs:
             times = []
